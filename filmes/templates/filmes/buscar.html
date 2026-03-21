@@ -19,6 +19,30 @@
         <p>Gênero: {{ filme.Genre }}</p>
         <img src="{{ filme.Poster }} " alt="Poster">
     {% endif %}
+</br>
+
+    {% if criticas %}
+        <h3>Críticas</h3>
+
+        {% for critica in criticas %}
+            <div style="border:1px solid #000; margin:10px; padding:10px;">
+                <p><strong>{{ critica.usuario }}</strong></p>
+                <p>Nota: {{ critica.nota }}</p>
+                <p>{{ critica.comentarios }}</p>
+            </div>
+        {% endfor %}
+
+    {% else%}
+        <p>Sem críticas ainda.</p>
+    {% endif%}
+
+
+</br>
+    {% if filme_obj %}
+        <a href=" {% url 'criar_critica' filme_obj.id %}"><button type="button">
+            Avaliar Filme
+        </button></a>
+    {% endif %}
     
 </body>
 </html>
