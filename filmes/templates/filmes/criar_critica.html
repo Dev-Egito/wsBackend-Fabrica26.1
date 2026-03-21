@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Critica</title>
+</head>
+<body>
+    <h1>Avaliar</h1>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <textarea name="comentarios" placeholder="Digite sua crítica" required></textarea>
+
+        <input type="number" name="nota" min="1" max="5" placeholder="Nota (1 a 5)">
+
+        <button type="submit">Enviar</button>
+    </form>
+</body>
+</html>

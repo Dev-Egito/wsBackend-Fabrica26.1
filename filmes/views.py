@@ -1,6 +1,8 @@
 import requests
-from django.shortcuts import render 
-from .models import Filme
+from django.shortcuts import render, redirect
+from .models import Filme, Critica
+
+from django.contrib.auth.models import User
 
 def buscar_filme_api(titulo):
     url = f"http://www.omdbapi.com/?t={titulo}&apikey=6f10a1dc"
@@ -17,6 +19,7 @@ def buscar_filme_api(titulo):
 def buscar_filme(request):
     filme_api = None
     filme_obj = None
+    criticas = None
     titulo = request.GET.get('titulo')
 
     if 'titulo' in request.GET:
@@ -29,6 +32,7 @@ def buscar_filme(request):
                     "titulo": filme_api["Title"]
                 }
             )
+            criticas = Critica.objects.filter(filme=filme_obj)
             
     print("API:", filme_api)
     print("OBJ:", filme_obj)
@@ -36,6 +40,27 @@ def buscar_filme(request):
     return render(request, 'filmes/buscar.html', {
         'filme': filme_api,
         'filme_obj': filme_obj,
+        'criticas': criticas,
     })
+
+def criar_critica(request, filme_id):
+    filme = Filme.objects.get(id=filme_id)
+
+    if request.method == "POST":
+        comentarios = request.POST.get("comentarios")
+        nota = request.POST.get("nota")
+
+        usuario_manual = User.objects.first()
+
+        Critica.objects.create(
+            usuario = usuario_manual,
+            filme = filme,
+            comentarios = comentarios,
+            nota = nota,
+        )
+
+        return redirect(f'/filmes/?titulo={filme.titulo}')
+
+    return render(request, 'filmes/criar_critica.html', {'filme': filme})
     
 # Create your views here.
