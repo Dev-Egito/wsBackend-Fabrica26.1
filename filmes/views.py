@@ -1,5 +1,6 @@
 import requests
 from django.shortcuts import render 
+from .models import Filme
 
 def buscar_filme_api(titulo):
     url = f"http://www.omdbapi.com/?t={titulo}&apikey=6f10a1dc"
@@ -14,12 +15,27 @@ def buscar_filme_api(titulo):
     return None
 
 def buscar_filme(request):
-    filme = None
+    filme_api = None
+    filme_obj = None
     titulo = request.GET.get('titulo')
 
     if 'titulo' in request.GET:
-        filme = buscar_filme_api(titulo)
-    
-    return render(request, 'filmes/buscar.html', {'filme': filme})
+        filme_api = buscar_filme_api(titulo)
+
+        if filme_api:
+            filme_obj, created = Filme.objects.get_or_create(
+                imdb_id=filme_api["imdbID"],
+                defaults={
+                    "titulo": filme_api["Title"]
+                }
+            )
+            
+    print("API:", filme_api)
+    print("OBJ:", filme_obj)
+
+    return render(request, 'filmes/buscar.html', {
+        'filme': filme_api,
+        'filme_obj': filme_obj,
+    })
     
 # Create your views here.
