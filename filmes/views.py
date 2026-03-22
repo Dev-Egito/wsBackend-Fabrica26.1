@@ -49,14 +49,12 @@ def criar_critica(request, filme_id):
     if request.method == "POST":
         comentarios = request.POST.get("comentarios")
         nota = request.POST.get("nota")
-
         usuario_manual = User.objects.first()
 
-        Critica.objects.create(
+        Critica.objects.update_or_create(
             usuario = usuario_manual,
             filme = filme,
-            comentarios = comentarios,
-            nota = nota,
+            defaults={'comentarios': comentarios, 'nota': nota}
         )
 
         return redirect(f'/filmes/?titulo={filme.titulo}')
